@@ -113,7 +113,6 @@ jobs:
     strategy:
       matrix:
         os: [ 13, 14, 15 ]
-        cmconfig: [ Debug ]
     runs-on: macos-${{matrix.os}}
     env:
       builddir: build-macos-${{matrix.os}}-${{matrix.cmconfig}}
@@ -124,8 +123,11 @@ jobs:
         run: |
           cmake -B ${{env.builddir}} -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}}
 
-      - name: Build (Xcode)
-        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+      - name: Build (Xcode, Debug)
+        run: cmake --build ${{env.builddir}} --config Debug --parallel
+
+      - name: Build (Xcode, Release)
+        run: cmake --build ${{env.builddir}} --config Release --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -133,6 +135,7 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/Debug/
+            ./${{env.builddir}}/_deps/sdl-build/Release/
           name: macos-${{matrix.os}}
 
 
