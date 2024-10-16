@@ -13,8 +13,6 @@ jobs:
         config: [ Debug ]
     runs-on: ubuntu-22.04
     container: gcc:13
-    env:
-      artpath: ${{github.workspace}}
     steps:
       - uses: actions/checkout@v4
       - name: Install prerequisites
@@ -29,15 +27,15 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{matrix.config}} \
 
       - name: Build
-        run: cmake --build ${{env.artpath}}/build --config ${{matrix.config}} --parallel
+        run: cmake --build ${{github.workspace}}/build --config ${{matrix.config}} --parallel
 
       - name: UPL
         uses: actions/upload-artifact@v4
         with:
-          path: ${{env.artpath}}/build/_deps/sdl-build/libSDL3.a
+          path: ./build/_deps/sdl-build/libSDL3.a
           name: libs
           
       - name: List
-        run: ls ${{env.artpath}}/build/_deps/sdl-build/
+        run: ls ${{github.workspace}}/build/_deps/sdl-build/
 
 
