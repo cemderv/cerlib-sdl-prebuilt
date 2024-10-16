@@ -12,6 +12,8 @@ jobs:
       matrix:
         config: [ Debug ]
     runs-on: ubuntu-22.04
+    env:
+      builddir: build
     container: gcc:13
     steps:
       - uses: actions/checkout@v4
@@ -23,15 +25,17 @@ jobs:
       
       - name: Configure CMake
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.config}}
+          cmake -B ${{env.builddir}} -DCMAKE_BUILD_TYPE=${{matrix.config}}
 
       - name: Build
-        run: cmake --build build --config ${{matrix.config}} --parallel
+        run: cmake --build ${{env.builddir}} --config ${{matrix.config}} --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          path: ./build/_deps/sdl-build/
+          path: |
+            ./${{env.builddir}}/_deps/sdl-src/include/
+            ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
           name: linux-gcc
 
   build-macos:
@@ -40,20 +44,24 @@ jobs:
         os: [ 15 ]
         config: [ Debug ]
     runs-on: macos-${{matrix.os}}
+    env:
+      builddir: build-macos-${{matrix.os}}-${{matrix.config}}
     steps:
       - uses: actions/checkout@v4
 
       - name: Configure CMake (Xcode)
         run: |
-          cmake -B build-macos-${{matrix.os}} -G Xcode -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake -B ${{env.builddir}} -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.config}}
 
       - name: Build (Xcode)
-        run: cmake --build build-macos-${{matrix.os}} --config ${{matrix.config}} --parallel
+        run: cmake --build ${{env.builddir}} --config ${{matrix.config}} --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          path: ./build-macos-${{matrix.os}}/_deps/sdl-build/
+          path: |
+            ./${{env.builddir}}/_deps/sdl-src/include/
+            ./${{env.builddir}}/_deps/sdl-build/
           name: macos-${{matrix.os}}
 
 
