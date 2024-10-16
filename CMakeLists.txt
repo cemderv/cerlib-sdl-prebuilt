@@ -4,6 +4,8 @@ project(cerlib-sdl-prebuilt)
 
 include(CPM.cmake)
 
+set(BUILD_SHARED_LIBS OFF)
+
 CPMAddPackage(
   NAME SDL
   GITHUB_REPOSITORY libsdl-org/SDL
@@ -34,7 +36,8 @@ CPMAddPackage(
   "SDL_LIBUDEV OFF"
   "SDL_STATIC_VCRT OFF"
   "SDL_STATIC ON"
-  "SDL_SHARED ON"
+  "SDL_SHARED OFF"
+  "SDL_GPU OFF"
   GIT_SHALLOW
   SYSTEM
 )
