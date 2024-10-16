@@ -82,7 +82,6 @@ jobs:
     strategy:
       matrix:
         os: [ 2022 ]
-        cmconfig: [ Debug ]
     runs-on: windows-${{matrix.os}}
     env:
       builddir: build-${{matrix.os}}
@@ -93,15 +92,21 @@ jobs:
         run: |
           cmake -B ${{env.builddir}}
 
-      - name: Build
-        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+      - name: Build (Debug)
+        run: cmake --build ${{env.builddir}} --config Debug --parallel
+        
+      - name: Build (Release)
+        run: cmake --build ${{env.builddir}} --config Release --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
-            ./${{env.builddir}}/_deps/sdl-build/
+            ./${{env.builddir}}/_deps/sdl-build/Debug/SDL_uclibc.lib
+            ./${{env.builddir}}/_deps/sdl-build/Debug/SDL3-static.lib
+            ./${{env.builddir}}/_deps/sdl-build/Release/SDL_uclibc.lib
+            ./${{env.builddir}}/_deps/sdl-build/Release/SDL3-static.lib
           name: windows-${{matrix.os}}
           
   build-macos:
