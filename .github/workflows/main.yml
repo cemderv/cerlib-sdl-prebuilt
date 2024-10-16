@@ -10,7 +10,7 @@ jobs:
   build-linux-gcc:
     strategy:
       matrix:
-        compiler: [ 13, 14 ]
+        compiler: [ 11, 12, 13, 14 ]
     runs-on: ubuntu-22.04
     env:
       builddir: build-${{matrix.compiler}}
