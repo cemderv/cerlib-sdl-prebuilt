@@ -29,12 +29,13 @@ jobs:
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.config}} --parallel
 
-      - name: List
-        run: ls build/_deps/sdl-build/
-
       - name: UPL
         uses: actions/upload-artifact@v4
         with:
-          path: build/_deps/sdl-build/libSDL3.a
+          path: ${{github.workspace}}/build/_deps/sdl-build/libSDL3.a
           name: libs
+          
+      - name: List
+        run: ls ${{github.workspace}}/build/_deps/sdl-build/
+
 
