@@ -13,6 +13,8 @@ jobs:
         config: [ Debug ]
     runs-on: ubuntu-22.04
     container: gcc:13
+    env:
+      artpath: ${{github.workspace}}
     steps:
       - uses: actions/checkout@v4
       - name: Install prerequisites
@@ -32,10 +34,10 @@ jobs:
       - name: UPL
         uses: actions/upload-artifact@v4
         with:
-          path: ${{github.workspace}}/build/_deps/sdl-build/libSDL3.a
+          path: ${{env.artpath}}/build/_deps/sdl-build/libSDL3.a
           name: libs
           
       - name: List
-        run: ls ${{github.workspace}}/build/_deps/sdl-build/
+        run: ls ${{env.artpath}}/build/_deps/sdl-build/
 
 
