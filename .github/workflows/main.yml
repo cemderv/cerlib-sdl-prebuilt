@@ -35,6 +35,6 @@ jobs:
       - name: UPL
         uses: actions/upload-artifact@v4
         with:
-          path: ${{github.workspace}}/build/_deps/sdl-build/libSDL3.a
+          path: ./build/_deps/sdl-build/libSDL3.a
           name: libs
 
