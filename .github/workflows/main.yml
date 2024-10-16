@@ -10,11 +10,12 @@ jobs:
   build-linux-gcc:
     strategy:
       matrix:
-        cmconfig: [ Debug ]
+        compiler: [ 13, 14 ]
+        cmconfig: [ Debug, Release ]
     runs-on: ubuntu-22.04
     env:
-      builddir: build
-    container: gcc:13
+      builddir: build-${{matrix.compiler}}
+    container: gcc:${{matrix.compiler}}
     steps:
       - uses: actions/checkout@v4
       - name: Install prerequisites
@@ -37,15 +38,16 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-gcc
+          name: linux-gcc-${{matrix.compiler}}
 
   build-linux-clang:
     strategy:
       matrix:
-        cmconfig: [ Debug ]
+        compiler: [ 16 ]
+        cmconfig: [ Debug, Release ]
     runs-on: ubuntu-22.04
     env:
-      builddir: build
+      builddir: build-${{matrix.compiler}}
     container: gcc:13
     steps:
       - uses: actions/checkout@v4
@@ -58,14 +60,14 @@ jobs:
                          gnupg
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
-          ./llvm.sh 16 all
+          ./llvm.sh ${{matrix.compiler}} all
 
       - name: Configure CMake
         run: |
           cmake -B ${{env.builddir}} \
           -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}} \
-          -DCMAKE_C_COMPILER=clang-16 \
-          -DCMAKE_CXX_COMPILER=clang++-16
+          -DCMAKE_C_COMPILER=clang-${{matrix.compiler}} \
+          -DCMAKE_CXX_COMPILER=clang++-${{matrix.compiler}}
 
       - name: Build
         run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
@@ -76,7 +78,7 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-clang
+          name: linux-clang-${{matrix.compiler}}
 
   build-windows:
     strategy:
@@ -110,7 +112,7 @@ jobs:
   build-macos:
     strategy:
       matrix:
-        os: [ 13 ]
+        os: [ 13, 14, 15 ]
         cmconfig: [ Debug ]
     runs-on: macos-${{matrix.os}}
     env:
