@@ -74,6 +74,9 @@ jobs:
       - name: Build (Debug)
         run: cmake --build ${{env.builddir}} --config Debug --parallel
 
+      - name: Build (Release)
+        run: cmake --build ${{env.builddir}} --config Release --parallel
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
