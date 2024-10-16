@@ -103,8 +103,7 @@ jobs:
         with:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
-            ./${{env.builddir}}/_deps/sdl-build/Debug/
-            ./${{env.builddir}}/_deps/sdl-build/Release/
+            ./${{env.builddir}}/_deps/sdl-build/
           name: windows-${{matrix.os}}
           
   build-macos:
