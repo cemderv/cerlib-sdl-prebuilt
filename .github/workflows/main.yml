@@ -30,7 +30,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.config}} --parallel
 
       - name: List
-        run: ls -R
+        run: ls ${{github.workspace}}/build/
 
       - name: UPL
         uses: actions/upload-artifact@v4
