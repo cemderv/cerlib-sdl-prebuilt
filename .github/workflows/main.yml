@@ -110,7 +110,7 @@ jobs:
   build-macos:
     strategy:
       matrix:
-        os: [ 15 ]
+        os: [ 13 ]
         cmconfig: [ Debug ]
     runs-on: macos-${{matrix.os}}
     env:
