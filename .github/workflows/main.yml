@@ -121,13 +121,13 @@ jobs:
         os: [ 13, 14, 15 ]
     runs-on: macos-${{matrix.os}}
     env:
-      builddir: build-macos-${{matrix.os}}-${{matrix.cmconfig}}
+      builddir: build-macos-${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
 
       - name: Configure CMake (Xcode)
         run: |
-          cmake -B ${{env.builddir}} -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}}
+          cmake -B ${{env.builddir}} -G Xcode
 
       - name: Build (Xcode, Debug)
         run: cmake --build ${{env.builddir}} --config Debug --parallel
