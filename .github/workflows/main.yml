@@ -54,7 +54,8 @@ jobs:
           apt update -y
           apt upgrade -y
           apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols \
-                         xorg-dev libasound2-dev
+                         xorg-dev libasound2-dev lsb-release wget software-properties-common \
+                         gnupg
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
           ./llvm.sh 16 all
