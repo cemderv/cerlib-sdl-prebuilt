@@ -43,7 +43,7 @@ jobs:
   build-linux-clang:
     strategy:
       matrix:
-        compiler: [ 16 ]
+        compiler: [ 16, 17, 18, 19 ]
         cmconfig: [ Debug, Release ]
     runs-on: ubuntu-22.04
     env:
