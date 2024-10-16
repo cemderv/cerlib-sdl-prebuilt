@@ -25,6 +25,12 @@ jobs:
         run: |
           cmake -B ${{github.workspace}}/build \
           -DCMAKE_BUILD_TYPE=${{matrix.config}} \
+      
+      - name: DL
+        uses: actions/download-artifact@v4
+        with:
+          name: dlb
+          path: ${{github.workspace}}/build
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.config}}
