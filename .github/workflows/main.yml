@@ -33,8 +33,5 @@ jobs:
         with:
           path: ./build/_deps/sdl-build/libSDL3.a
           name: libs
-          
-      - name: List
-        run: ls ${{github.workspace}}/build/_deps/sdl-build/
 
 
