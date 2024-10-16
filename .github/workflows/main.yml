@@ -38,7 +38,7 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-gcc-${{matrix.compiler}}-${{matrix.cmconfig}}
+          name: linux-gcc-${{matrix.compiler}}-${{matrix.cmconfig}}-x64
 
   build-linux-clang:
     strategy:
@@ -78,7 +78,7 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-clang-${{matrix.compiler}}-${{matrix.cmconfig}}
+          name: linux-clang-${{matrix.compiler}}-${{matrix.cmconfig}}-x64
 
   build-windows:
     strategy:
@@ -107,7 +107,7 @@ jobs:
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/Debug/
             ./${{env.builddir}}/_deps/sdl-build/Release/
-          name: windows-${{matrix.os}}
+          name: windows-${{matrix.os}}-x64
           
   build-macos:
     strategy:
