@@ -7,10 +7,10 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-linux-gcc13:
+  build-linux-gcc:
     strategy:
       matrix:
-        config: [ Debug ]
+        cmconfig: [ Debug ]
     runs-on: ubuntu-22.04
     env:
       builddir: build
@@ -21,14 +21,15 @@ jobs:
         run: |
           apt update -y
           apt upgrade -y
-          apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols xorg-dev libasound2-dev
+          apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols xorg-dev \
+                         libasound2-dev
       
       - name: Configure CMake
         run: |
-          cmake -B ${{env.builddir}} -DCMAKE_BUILD_TYPE=${{matrix.config}}
+          cmake -B ${{env.builddir}} -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}}
 
       - name: Build
-        run: cmake --build ${{env.builddir}} --config ${{matrix.config}} --parallel
+        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -38,23 +39,61 @@ jobs:
             ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
           name: linux-gcc
 
-  build-macos:
+  build-linux-clang:
     strategy:
       matrix:
-        os: [ 15 ]
-        config: [ Debug ]
-    runs-on: macos-${{matrix.os}}
+        cmconfig: [ Debug ]
+    runs-on: ubuntu-22.04
     env:
-      builddir: build-macos-${{matrix.os}}-${{matrix.config}}
+      builddir: build
+    container: gcc:13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install prerequisites
+        run: |
+          apt update -y
+          apt upgrade -y
+          apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols \
+                         xorg-dev libasound2-dev
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          ./llvm.sh 16 all
+
+      - name: Configure CMake
+        run: |
+          cmake -B ${{env.builddir}} \
+          -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}} \
+          -DCMAKE_C_COMPILER=clang-16 \
+          -DCMAKE_CXX_COMPILER=clang++-16
+
+      - name: Build
+        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            ./${{env.builddir}}/_deps/sdl-src/include/
+            ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
+          name: linux-clang
+
+  build-windows:
+    strategy:
+      matrix:
+        os: [ 2022 ]
+        cmconfig: [ Debug ]
+    runs-on: windows-${{matrix.os}}
+    env:
+      builddir: build-${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure CMake (Xcode)
+      - name: Configure CMake
         run: |
-          cmake -B ${{env.builddir}} -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.config}}
+          cmake -B ${{env.builddir}}
 
-      - name: Build (Xcode)
-        run: cmake --build ${{env.builddir}} --config ${{matrix.config}} --parallel
+      - name: Build
+        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -62,6 +101,32 @@ jobs:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
             ./${{env.builddir}}/_deps/sdl-build/
+          name: windows-${{matrix.os}}
+          
+  build-macos:
+    strategy:
+      matrix:
+        os: [ 15 ]
+        cmconfig: [ Debug ]
+    runs-on: macos-${{matrix.os}}
+    env:
+      builddir: build-macos-${{matrix.os}}-${{matrix.cmconfig}}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake (Xcode)
+        run: |
+          cmake -B ${{env.builddir}} -G Xcode -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}}
+
+      - name: Build (Xcode)
+        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            ./${{env.builddir}}/_deps/sdl-src/include/
+            ./${{env.builddir}}/_deps/sdl-build/Debug/
           name: macos-${{matrix.os}}
 
 
