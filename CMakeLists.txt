@@ -5,6 +5,7 @@ project(cerlib-sdl-prebuilt)
 include(CPM.cmake)
 
 set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 CPMAddPackage(
   NAME SDL
