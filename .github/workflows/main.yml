@@ -38,8 +38,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: |
-            ./${{env.builddir}}/_deps/sdl-src/include/
-            ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
+            ./${{env.builddir}}/
           name: linux-gcc-${{matrix.compiler}}-x64
 
   build-linux-clang:
