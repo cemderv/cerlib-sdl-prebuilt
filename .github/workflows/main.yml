@@ -23,15 +23,37 @@ jobs:
       
       - name: Configure CMake
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.config}} \
+          cmake -B build -DCMAKE_BUILD_TYPE=${{matrix.config}}
 
       - name: Build
         run: cmake --build build --config ${{matrix.config}} --parallel
 
-      - name: UPL
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           path: ./build/_deps/sdl-build/
-          name: libs
+          name: linux-gcc
+
+  build-macos:
+    strategy:
+      matrix:
+        os: [ 15 ]
+        config: [ Debug ]
+    runs-on: macos-${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake (Xcode)
+        run: |
+          cmake -B build-macos-${{matrix.os}} -G Xcode -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build (Xcode)
+        run: cmake --build build-macos-${{matrix.os}} --config ${{matrix.config}} --parallel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./build-macos-${{matrix.os}}/_deps/sdl-build/
+          name: macos-${{matrix.os}}
 
 
