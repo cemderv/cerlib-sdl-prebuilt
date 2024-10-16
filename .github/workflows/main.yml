@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         compiler: [ 13, 14 ]
-        cmconfig: [ Debug, Release ]
     runs-on: ubuntu-22.04
     env:
       builddir: build-${{matrix.compiler}}
@@ -23,28 +22,31 @@ jobs:
           apt update -y
           apt upgrade -y
           apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols xorg-dev \
-                         libasound2-dev
+                         libasound2-dev ninja-build
       
       - name: Configure CMake
         run: |
-          cmake -B ${{env.builddir}} -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}}
+          cmake -B ${{env.builddir}} -G "Ninja Multi-Config"
 
-      - name: Build
-        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+      - name: Build (Debug)
+        run: cmake --build ${{env.builddir}} --config Debug --parallel
+
+      - name: Build (Release)
+        run: cmake --build ${{env.builddir}} --config Release --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
-            ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-gcc-${{matrix.compiler}}-${{matrix.cmconfig}}-x64
+            ./${{env.builddir}}/_deps/sdl-build/Debug/libSDL3.a
+            ./${{env.builddir}}/_deps/sdl-build/Release/libSDL3.a
+          name: linux-gcc-${{matrix.compiler}}-x64
 
   build-linux-clang:
     strategy:
       matrix:
         compiler: [ 16, 17, 18, 19 ]
-        cmconfig: [ Debug, Release ]
     runs-on: ubuntu-22.04
     env:
       builddir: build-${{matrix.compiler}}
@@ -57,7 +59,7 @@ jobs:
           apt upgrade -y
           apt install -y cmake libwayland-dev libxkbcommon-dev wayland-protocols \
                          xorg-dev libasound2-dev lsb-release wget software-properties-common \
-                         gnupg
+                         gnupg ninja-build
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
           ./llvm.sh ${{matrix.compiler}} all
@@ -65,20 +67,21 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B ${{env.builddir}} \
-          -DCMAKE_BUILD_TYPE=${{matrix.cmconfig}} \
+          -G "Ninja Multi-Config" \
           -DCMAKE_C_COMPILER=clang-${{matrix.compiler}} \
           -DCMAKE_CXX_COMPILER=clang++-${{matrix.compiler}}
 
-      - name: Build
-        run: cmake --build ${{env.builddir}} --config ${{matrix.cmconfig}} --parallel
+      - name: Build (Debug)
+        run: cmake --build ${{env.builddir}} --config Debug --parallel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           path: |
             ./${{env.builddir}}/_deps/sdl-src/include/
-            ./${{env.builddir}}/_deps/sdl-build/libSDL3.a
-          name: linux-clang-${{matrix.compiler}}-${{matrix.cmconfig}}-x64
+            ./${{env.builddir}}/_deps/sdl-build/Debug/libSDL3.a
+            ./${{env.builddir}}/_deps/sdl-build/Release/libSDL3.a
+          name: linux-clang-${{matrix.compiler}}-x64
 
   build-windows:
     strategy:
